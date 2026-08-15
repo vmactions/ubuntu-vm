@@ -1,0 +1,38 @@
+          - release: "22.03-LTS-SP4"
+            arch: riscv64
+          - release: "22.03-LTS-SP4"
+            arch: powerpc64
+          - release: "22.03-LTS-SP4"
+            arch: sparc64
+          - release: "22.03-LTS-SP4"
+            arch: ppc64le
+          - release: "22.03-LTS-SP4"
+            arch: s390x
+          - release: "22.03-LTS-SP4"
+            arch: i386
+          - release: "22.03-LTS-SP4"
+            arch: loongarch64
+          - release: "25.09"
+            arch: powerpc64
+          - release: "25.09"
+            arch: sparc64
+          - release: "25.09"
+            arch: ppc64le
+          - release: "25.09"
+            arch: s390x
+          - release: "25.09"
+            arch: i386
+          - release: "25.09"
+            arch: loongarch64
+          - release: ""
+            arch: riscv64
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: ppc64le
+          - release: ""
+            arch: s390x
+          - release: ""
+            arch: i386

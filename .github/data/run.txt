@@ -1,0 +1,8 @@
+          pwd
+          ls -lah
+          whoami
+          env
+          uname -a
+          cat /etc/os-release
+          nproc
+          echo "OK"

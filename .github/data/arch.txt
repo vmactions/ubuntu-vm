@@ -1,0 +1,5 @@
+
+
+All three releases ship every architecture (see the release table above).
+
+`aarch64`, `riscv64`, `s390x` and `ppc64le` all run under QEMU emulation on the x86_64 runner, so they are much slower than `x86_64`.

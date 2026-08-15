@@ -1,0 +1,27 @@
+{
+  "name": "vmactions-OpenEuler",
+  "version": "",
+  "description": "GitHub actions for OpenEuler",
+  "type": "module",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vmactions/openeuler-vm.git"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "OpenEuler"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vmactions/openeuler-vm/issues"
+  },
+  "homepage": "https://github.com/vmactions/openeuler-vm",
+  "dependencies": {
+    "@actions/core": "^3.0.0",
+    "@actions/exec": "^3.0.0",
+    "@actions/cache": "^6.0.0"
+  }
+}
