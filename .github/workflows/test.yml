@@ -26,9 +26,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "22.03-LTS-SP4", "25.09"
+        release: [ "22.04", "24.04", "26.04"
 , ""]
-        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64"]
+        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64", "armv7"]
         runs: [ "ubuntu-24.04", "ubuntu-24.04-arm"]
         exclude:
           - runs: "ubuntu-24.04-arm"
@@ -47,72 +47,76 @@ jobs:
             arch: "i386"
           - runs: "ubuntu-24.04-arm"
             arch: "loongarch64"
+          - runs: "ubuntu-24.04-arm"
+            arch: "armv7"
           # Manual matrix excludes only; combos with no conf are auto-excluded.
-          - release: "22.03-LTS-SP4"
-            arch: riscv64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: powerpc64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: sparc64
-          - release: "22.03-LTS-SP4"
-            arch: ppc64le
-          - release: "22.03-LTS-SP4"
-            arch: s390x
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: i386
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: loongarch64
-          - release: "25.09"
+          - release: "22.04"
+            arch: armv7
+          - release: "24.04"
             arch: powerpc64
-          - release: "25.09"
+          - release: "24.04"
             arch: sparc64
-          - release: "25.09"
-            arch: ppc64le
-          - release: "25.09"
-            arch: s390x
-          - release: "25.09"
+          - release: "24.04"
             arch: i386
-          - release: "25.09"
+          - release: "24.04"
+            arch: loongarch64
+          - release: "24.04"
+            arch: armv7
+          - release: "26.04"
+            arch: powerpc64
+          - release: "26.04"
+            arch: sparc64
+          - release: "26.04"
+            arch: i386
+          - release: "26.04"
+            arch: loongarch64
+          - release: "26.04"
+            arch: armv7
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: i386
+          - release: ""
             arch: loongarch64
           - release: ""
-            arch: riscv64
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: ppc64le
-          - release: ""
-            arch: s390x
-          - release: ""
-            arch: i386
+            arch: armv7
 
 
     runs-on: ${{ matrix.runs }}
-    name: sshfs OpenEuler
+    name: sshfs Ubuntu
     env:
       MYTOKEN : ${{ secrets.MYTOKEN }}
       MYTOKEN2: "value2"
       DEBUG: 1
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 #    - name: Creating Web console
-#      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
+#      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
 #      uses: vmactions/cf-tunnel@v0
 #      id: tunnel
 #      with:
 #        protocol: http
 #        port: 8000
 
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
         mem: 4096
         release: ${{ matrix.release }}
         arch: ${{ matrix.arch }}
@@ -121,7 +125,6 @@ jobs:
           "8080": "80"
           "8443": "443"
           udp:"8081": "80"
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         sync: sshfs
@@ -145,7 +148,7 @@ jobs:
 
 
     - name: Test NAT
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
       env:
         VM_USER: ""
       run: |
@@ -154,8 +157,8 @@ jobs:
         [ "$TEST_ENV" = "abc" ]
         ssh -v -p 20022 ${VM_USER:-root}@localhost  "uname -a;whoami;pwd"
     - name: Test custom shell
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
-      shell: openeuler {0}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
+      shell: ubuntu {0}
       run: |
         pwd
           pwd
@@ -198,9 +201,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "22.03-LTS-SP4", "25.09"
+        release: [ "22.04", "24.04", "26.04"
 , ""]
-        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64"]
+        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64", "armv7"]
         runs: [ "ubuntu-24.04", "ubuntu-24.04-arm"]
         exclude:
           - runs: "ubuntu-24.04-arm"
@@ -219,64 +222,68 @@ jobs:
             arch: "i386"
           - runs: "ubuntu-24.04-arm"
             arch: "loongarch64"
+          - runs: "ubuntu-24.04-arm"
+            arch: "armv7"
           # Manual matrix excludes only; combos with no conf are auto-excluded.
-          - release: "22.03-LTS-SP4"
-            arch: riscv64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: powerpc64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: sparc64
-          - release: "22.03-LTS-SP4"
-            arch: ppc64le
-          - release: "22.03-LTS-SP4"
-            arch: s390x
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: i386
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: loongarch64
-          - release: "25.09"
+          - release: "22.04"
+            arch: armv7
+          - release: "24.04"
             arch: powerpc64
-          - release: "25.09"
+          - release: "24.04"
             arch: sparc64
-          - release: "25.09"
-            arch: ppc64le
-          - release: "25.09"
-            arch: s390x
-          - release: "25.09"
+          - release: "24.04"
             arch: i386
-          - release: "25.09"
+          - release: "24.04"
+            arch: loongarch64
+          - release: "24.04"
+            arch: armv7
+          - release: "26.04"
+            arch: powerpc64
+          - release: "26.04"
+            arch: sparc64
+          - release: "26.04"
+            arch: i386
+          - release: "26.04"
+            arch: loongarch64
+          - release: "26.04"
+            arch: armv7
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: i386
+          - release: ""
             arch: loongarch64
           - release: ""
-            arch: riscv64
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: ppc64le
-          - release: ""
-            arch: s390x
-          - release: ""
-            arch: i386
+            arch: armv7
 
 
     runs-on: ${{ matrix.runs }}
-    name: nfs OpenEuler
+    name: nfs Ubuntu
     env:
       MYTOKEN : ${{ secrets.MYTOKEN }}
       MYTOKEN2: "value2"
       DEBUG: 1
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
         mem: 4096
         release: ${{ matrix.release }}
         arch: ${{ matrix.arch }}
@@ -285,7 +292,6 @@ jobs:
           "8080": "80"
           "8443": "443"
           udp:"8081": "80"
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         sync: nfs
@@ -309,7 +315,7 @@ jobs:
 
 
     - name: Test NAT
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
       env:
         VM_USER: ""
       run: |
@@ -321,8 +327,8 @@ jobs:
         [ "$TEST_ENV" = "abc" ]
         ssh -v -p 20022 ${VM_USER:-root}@localhost "uname -a;whoami;pwd"
     - name: Test custom shell
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
-      shell: openeuler {0}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
+      shell: ubuntu {0}
       run: |
         pwd
           pwd
@@ -363,9 +369,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "22.03-LTS-SP4", "25.09"
+        release: [ "22.04", "24.04", "26.04"
 , ""]
-        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64"]
+        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64", "armv7"]
         runs: [ "ubuntu-24.04", "ubuntu-24.04-arm"]
         exclude:
           - runs: "ubuntu-24.04-arm"
@@ -384,71 +390,75 @@ jobs:
             arch: "i386"
           - runs: "ubuntu-24.04-arm"
             arch: "loongarch64"
+          - runs: "ubuntu-24.04-arm"
+            arch: "armv7"
           # Manual matrix excludes only; combos with no conf are auto-excluded.
-          - release: "22.03-LTS-SP4"
-            arch: riscv64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: powerpc64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: sparc64
-          - release: "22.03-LTS-SP4"
-            arch: ppc64le
-          - release: "22.03-LTS-SP4"
-            arch: s390x
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: i386
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: loongarch64
-          - release: "25.09"
+          - release: "22.04"
+            arch: armv7
+          - release: "24.04"
             arch: powerpc64
-          - release: "25.09"
+          - release: "24.04"
             arch: sparc64
-          - release: "25.09"
-            arch: ppc64le
-          - release: "25.09"
-            arch: s390x
-          - release: "25.09"
+          - release: "24.04"
             arch: i386
-          - release: "25.09"
+          - release: "24.04"
+            arch: loongarch64
+          - release: "24.04"
+            arch: armv7
+          - release: "26.04"
+            arch: powerpc64
+          - release: "26.04"
+            arch: sparc64
+          - release: "26.04"
+            arch: i386
+          - release: "26.04"
+            arch: loongarch64
+          - release: "26.04"
+            arch: armv7
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: i386
+          - release: ""
             arch: loongarch64
           - release: ""
-            arch: riscv64
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: ppc64le
-          - release: ""
-            arch: s390x
-          - release: ""
-            arch: i386
+            arch: armv7
 
 
     runs-on: ${{ matrix.runs }}
-    name: scp OpenEuler
+    name: scp Ubuntu
     env:
       MYTOKEN : ${{ secrets.MYTOKEN }}
       MYTOKEN2: "value2"
       DEBUG: 1
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 #    - name: Creating Web console
-#      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
+#      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
 #      uses: vmactions/cf-tunnel@v0
 #      id: tunnel
 #      with:
 #        protocol: http
 #        port: 8000
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
         mem: 4096
         release: ${{ matrix.release }}
         arch: ${{ matrix.arch }}
@@ -457,7 +467,6 @@ jobs:
           "8080": "80"
           "8443": "443"
           udp:"8081": "80"
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         sync: scp
@@ -483,7 +492,7 @@ jobs:
 
 
     - name: Test files
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
       env:
         VM_USER: ""
       run: |
@@ -499,17 +508,17 @@ jobs:
     # get no GITHUB_WORKSPACE (SendEnv excluded), so the custom shell does not
     # run in the synced work tree.
     - name: Prepare custom shell sync test file on host
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') && !contains(github.repository, 'haiku') && !contains(github.repository, 'blissos') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') && !contains(github.repository, 'haiku') && !contains(github.repository, 'blissos') }}
       run: |
         echo "host-data" > hostfile.txt
     - name: Test custom shell file sync
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') && !contains(github.repository, 'haiku') && !contains(github.repository, 'blissos') }}
-      shell: openeuler {0}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') && !contains(github.repository, 'haiku') && !contains(github.repository, 'blissos') }}
+      shell: ubuntu {0}
       run: |
         [ "$(cat hostfile.txt)" = "host-data" ]
         echo "vm-data" > vmfile.txt
     - name: Verify custom shell copyback on host
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') && !contains(github.repository, 'haiku') && !contains(github.repository, 'blissos') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') && !contains(github.repository, 'haiku') && !contains(github.repository, 'blissos') }}
       run: |
         set -e
         [ "$(cat vmfile.txt)" = "vm-data" ]
@@ -537,15 +546,75 @@ jobs:
 
 
 
+  # One-shot tar sync (push at boot, pull at the end). This is the ONLY
+  # transport the telnet guests (ReactOS, Redox, RISC OS) have, and a
+  # declared-but-otherwise-untested method on the ssh guests whose builders
+  # list it. ONE leg per repo, on purpose: default release, default arch --
+  # tar's transport does not vary per release, so a full matrix would only
+  # burn runners. The gate greps the rendered sync map JSON as a string
+  # ('tar' is not a substring of any other method name); a per-arch lookup
+  # would wrongly skip the repos with no x86_64 arch at all (ReactOS is
+  # i386-only, RISC OS armv7-only -- their default arch comes from
+  # DEFAULT_ARCH in conf/default.release.conf). The in-guest command body is
+  # per-repo data (VM_TAR_RUN / VM_TAR_VERIFY in datafile.ini): the telnet
+  # guests speak their own command languages, so no shared POSIX script can
+  # run everywhere. A repo that defines neither still tests boot + push +
+  # copyback.
+  testtar:
+    runs-on: ubuntu-24.04
+    name: tar Ubuntu
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
+      if: ${{ contains('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}', 'tar') }}
+      id: test
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
+      with:
+        mem: 4096
+        debug: true
+        sync: tar
+        run: |
+
+    - name: Verify tar copyback on host
+      if: ${{ contains('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}', 'tar') }}
+      run: |
+        set -e
+        ls -lah "$HOME/work"
+
+    - name: Collect VM debug artifacts
+      if: failure()
+      run: |
+        mkdir -p ./vm-debug-artifacts
+        find /home/runner/work/_actions -type d -name output 2>/dev/null | while read d; do
+          find "$d" -type f \( -name "*.log" -o -name "*.ppm" \) | while read f; do
+            rel="${f#/home/runner/work/_actions/}"
+            mkdir -p "./vm-debug-artifacts/$(dirname "$rel")"
+            cp "$f" "./vm-debug-artifacts/$rel"
+          done
+        done
+        echo "Collected:"
+        find ./vm-debug-artifacts -type f || true
+    - name: Upload VM debug artifacts
+      if: failure()
+      uses: actions/upload-artifact@v7
+      with:
+        name: vm-debug-${{ github.job }}-${{ strategy.job-index }}
+        path: vm-debug-artifacts/
+        retention-days: 7
+        if-no-files-found: ignore
+
+
 
 
   test:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "22.03-LTS-SP4", "25.09"
+        release: [ "22.04", "24.04", "26.04"
 , ""]
-        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64"]
+        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64", "armv7"]
         runs: [ "ubuntu-24.04", "ubuntu-24.04-arm"]
         disableCache: [ "", "true"]
         exclude:
@@ -565,64 +634,68 @@ jobs:
             arch: "i386"
           - runs: "ubuntu-24.04-arm"
             arch: "loongarch64"
+          - runs: "ubuntu-24.04-arm"
+            arch: "armv7"
           # Manual matrix excludes only; combos with no conf are auto-excluded.
-          - release: "22.03-LTS-SP4"
-            arch: riscv64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: powerpc64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: sparc64
-          - release: "22.03-LTS-SP4"
-            arch: ppc64le
-          - release: "22.03-LTS-SP4"
-            arch: s390x
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: i386
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: loongarch64
-          - release: "25.09"
+          - release: "22.04"
+            arch: armv7
+          - release: "24.04"
             arch: powerpc64
-          - release: "25.09"
+          - release: "24.04"
             arch: sparc64
-          - release: "25.09"
-            arch: ppc64le
-          - release: "25.09"
-            arch: s390x
-          - release: "25.09"
+          - release: "24.04"
             arch: i386
-          - release: "25.09"
+          - release: "24.04"
+            arch: loongarch64
+          - release: "24.04"
+            arch: armv7
+          - release: "26.04"
+            arch: powerpc64
+          - release: "26.04"
+            arch: sparc64
+          - release: "26.04"
+            arch: i386
+          - release: "26.04"
+            arch: loongarch64
+          - release: "26.04"
+            arch: armv7
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: i386
+          - release: ""
             arch: loongarch64
           - release: ""
-            arch: riscv64
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: ppc64le
-          - release: ""
-            arch: s390x
-          - release: ""
-            arch: i386
+            arch: armv7
 
 
 
     runs-on: ${{ matrix.runs }}
-    name: rsync default OpenEuler
+    name: rsync default Ubuntu
     env:
       MYTOKEN : ${{ secrets.MYTOKEN }}
       MYTOKEN2: "value2"
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         envs: 'MYTOKEN MYTOKEN2'
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
         mem: 4096
         release: ${{ matrix.release }}
         arch: ${{ matrix.arch }}
@@ -631,7 +704,6 @@ jobs:
           "8080": "80"
           "8443": "443"
           udp:"8081": "80"
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         disable-cache: ${{ matrix.disableCache }}
@@ -648,7 +720,7 @@ jobs:
           echo "OK"
 
     - name: Test NAT
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       env:
         VM_USER: ""
       run: |
@@ -658,8 +730,8 @@ jobs:
         ssh -v  -p 20022 ${VM_USER:-root}@localhost  "uname -a;whoami;pwd"
 
     - name: Test custom shell
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
-      shell: openeuler {0}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
+      shell: ubuntu {0}
       run: |
         pwd
           pwd
@@ -703,9 +775,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "22.03-LTS-SP4", "25.09"
+        release: [ "22.04", "24.04", "26.04"
 , ""]
-        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64"]
+        arch: [ "aarch64", "", "riscv64", "powerpc64", "sparc64", "ppc64le", "s390x", "i386", "loongarch64", "armv7"]
         runs: [ "ubuntu-24.04", "ubuntu-24.04-arm"]
         exclude:
           - runs: "ubuntu-24.04-arm"
@@ -724,64 +796,68 @@ jobs:
             arch: "i386"
           - runs: "ubuntu-24.04-arm"
             arch: "loongarch64"
+          - runs: "ubuntu-24.04-arm"
+            arch: "armv7"
           # Manual matrix excludes only; combos with no conf are auto-excluded.
-          - release: "22.03-LTS-SP4"
-            arch: riscv64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: powerpc64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: sparc64
-          - release: "22.03-LTS-SP4"
-            arch: ppc64le
-          - release: "22.03-LTS-SP4"
-            arch: s390x
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: i386
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: loongarch64
-          - release: "25.09"
+          - release: "22.04"
+            arch: armv7
+          - release: "24.04"
             arch: powerpc64
-          - release: "25.09"
+          - release: "24.04"
             arch: sparc64
-          - release: "25.09"
-            arch: ppc64le
-          - release: "25.09"
-            arch: s390x
-          - release: "25.09"
+          - release: "24.04"
             arch: i386
-          - release: "25.09"
+          - release: "24.04"
+            arch: loongarch64
+          - release: "24.04"
+            arch: armv7
+          - release: "26.04"
+            arch: powerpc64
+          - release: "26.04"
+            arch: sparc64
+          - release: "26.04"
+            arch: i386
+          - release: "26.04"
+            arch: loongarch64
+          - release: "26.04"
+            arch: armv7
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: i386
+          - release: ""
             arch: loongarch64
           - release: ""
-            arch: riscv64
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: ppc64le
-          - release: ""
-            arch: s390x
-          - release: ""
-            arch: i386
+            arch: armv7
 
 
 
     runs-on: ${{ matrix.runs }}
-    name: customshell OpenEuler
+    name: customshell Ubuntu
     env:
       MYTOKEN : ${{ secrets.MYTOKEN }}
       MYTOKEN2: "value2"
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         envs: 'MYTOKEN MYTOKEN2'
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
         mem: 4096
         release: ${{ matrix.release }}
         arch: ${{ matrix.arch }}
@@ -790,7 +866,6 @@ jobs:
           "8080": "80"
           "8443": "443"
           udp:"8081": "80"
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         custom-shell-name: vmsh
@@ -807,7 +882,7 @@ jobs:
           echo "OK"
 
     - name: Test NAT
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       env:
         VM_USER: ""
       run: |
@@ -817,7 +892,7 @@ jobs:
         ssh -v  -p 20022 ${VM_USER:-root}@localhost  "uname -a;whoami;pwd"
 
     - name: Test custom shell
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       shell: vmsh {0}
       run: |
         pwd
@@ -836,17 +911,17 @@ jobs:
     # its guest gets no GITHUB_WORKSPACE (SendEnv excluded), so the custom
     # shell does not run in the synced work tree.
     - name: Prepare custom shell sync test file on host
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') && !contains(github.repository, 'haiku') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') && !contains(github.repository, 'haiku') }}
       run: |
         echo "host-data" > hostfile.txt
     - name: Test custom shell file sync
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') && !contains(github.repository, 'haiku') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') && !contains(github.repository, 'haiku') }}
       shell: vmsh {0}
       run: |
         [ "$(cat hostfile.txt)" = "host-data" ]
         echo "vm-data" > vmfile.txt
     - name: Verify custom shell copyback on host
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') && !contains(github.repository, 'haiku') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') && !contains(github.repository, 'haiku') }}
       run: |
         set -e
         [ "$(cat vmfile.txt)" = "vm-data" ]
@@ -895,23 +970,22 @@ jobs:
     strategy:
       fail-fast: false
     runs-on: ubuntu-24.04
-    name: cache-after-prepare seed OpenEuler
+    name: cache-after-prepare seed Ubuntu
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')['x86_64'], 'rsync') }}
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         mem: 4096
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         cache-after-prepare: true
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
           echo prepared >> "$HOME/.cache_after_prepare_count"
         run: |
           set -e
@@ -957,25 +1031,24 @@ jobs:
     strategy:
       fail-fast: false
     runs-on: ubuntu-24.04
-    name: cache-after-prepare hit OpenEuler
+    name: cache-after-prepare hit Ubuntu
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     # The inputs (notably 'prepare' and the sync method) must be byte-identical
     # to the seed job above: the prepared-image cache key hashes them.
-    - name: Test in OpenEuler
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')['x86_64'], 'rsync') }}
+    - name: Test in Ubuntu
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
         mem: 4096
-        usesh: true
         debug: true
         debug-on-error: ${{ vars.DEBUG_ON_ERROR }}
         cache-after-prepare: true
         prepare: |
-          dnf install -y curl
+          apt-get install -y socat
           echo prepared >> "$HOME/.cache_after_prepare_count"
         run: |
           set -e
@@ -995,7 +1068,7 @@ jobs:
     # hit-path regression or cross-run cache churn from another ref -- both
     # worth a red job.
     - name: Verify prepare was skipped
-      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs"],"aarch64":["rsync","scp","sshfs","nfs"],"riscv64":["rsync","scp","nfs"],"powerpc64":[],"sparc64":[],"ppc64le":[],"s390x":[],"i386":[],"loongarch64":["rsync","scp","sshfs","nfs"]}')['x86_64'], 'rsync') }}
+      if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       run: |
         set -e
         echo "cache-after-prepare-hit=${{ steps.test.outputs.cache-after-prepare-hit }}"
@@ -1026,15 +1099,14 @@ jobs:
     strategy:
       fail-fast: false
     runs-on: ubuntu-24.04
-    name: test default error OpenEuler
+    name: test default error Ubuntu
     steps:
-    - uses: actions/checkout@v6
-    - name: Test in OpenEuler
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
       id: testerr
       continue-on-error: true
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
-        usesh: true
         debug: true
         run: |
           echo "this is an error"
@@ -1054,15 +1126,14 @@ jobs:
     strategy:
       fail-fast: false
     runs-on: ubuntu-24.04
-    name: test default success OpenEuler
+    name: test default success Ubuntu
     steps:
-    - uses: actions/checkout@v6
-    - name: Test in OpenEuler
+    - uses: actions/checkout@v7
+    - name: Test in Ubuntu
       id: testpass
       continue-on-error: true
-      uses: vmactions/openeuler-vm@2e1b37a83aeaf1ed66a975546ddf2b8bf6ea6395
+      uses: vmactions/ubuntu-vm@56a9f193f74527aaefc09465e3d08c9cf8fcb2bf
       with:
-        usesh: true
         debug: true
         run: |
           echo "this is a normal command"

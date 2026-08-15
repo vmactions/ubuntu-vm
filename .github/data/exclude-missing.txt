@@ -1,38 +1,40 @@
-          - release: "22.03-LTS-SP4"
-            arch: riscv64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: powerpc64
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: sparc64
-          - release: "22.03-LTS-SP4"
-            arch: ppc64le
-          - release: "22.03-LTS-SP4"
-            arch: s390x
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: i386
-          - release: "22.03-LTS-SP4"
+          - release: "22.04"
             arch: loongarch64
-          - release: "25.09"
+          - release: "22.04"
+            arch: armv7
+          - release: "24.04"
             arch: powerpc64
-          - release: "25.09"
+          - release: "24.04"
             arch: sparc64
-          - release: "25.09"
-            arch: ppc64le
-          - release: "25.09"
-            arch: s390x
-          - release: "25.09"
+          - release: "24.04"
             arch: i386
-          - release: "25.09"
+          - release: "24.04"
+            arch: loongarch64
+          - release: "24.04"
+            arch: armv7
+          - release: "26.04"
+            arch: powerpc64
+          - release: "26.04"
+            arch: sparc64
+          - release: "26.04"
+            arch: i386
+          - release: "26.04"
+            arch: loongarch64
+          - release: "26.04"
+            arch: armv7
+          - release: ""
+            arch: powerpc64
+          - release: ""
+            arch: sparc64
+          - release: ""
+            arch: i386
+          - release: ""
             arch: loongarch64
           - release: ""
-            arch: riscv64
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: ppc64le
-          - release: ""
-            arch: s390x
-          - release: ""
-            arch: i386
+            arch: armv7
