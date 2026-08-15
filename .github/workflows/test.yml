@@ -112,7 +112,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
@@ -279,7 +279,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
@@ -454,7 +454,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
@@ -566,11 +566,24 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
+    # Sparse on purpose. The workspace IS the payload here, and this repo
+    # commits node_modules -- 4636 of its 4662 files, 35 MB of npm packages
+    # that prove nothing about the sync path. The agent guests move a few MB
+    # per minute (measured: 42 MB over 9P took 4.5 min each way), so a full
+    # checkout turns this job into an npm bulk-transfer benchmark -- it is
+    # what left the ReactOS push without a completion marker after 12
+    # minutes. The action under test is fetched into _actions, which the
+    # sync excludes anyway, so it is unaffected.
     - uses: actions/checkout@v7
+      with:
+        sparse-checkout: |
+          conf
+          .github
+        sparse-checkout-cone-mode: true
     - name: Test in Ubuntu
       if: ${{ contains('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}', 'tar') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         mem: 4096
         debug: true
@@ -622,11 +635,19 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
+    # Sparse for the same reason as testtar above: the workspace is the
+    # payload, and 35 MB of committed node_modules measures the guest's
+    # patience rather than the 9P path.
     - uses: actions/checkout@v7
+      with:
+        sparse-checkout: |
+          conf
+          .github
+        sparse-checkout-cone-mode: true
     - name: Test in Ubuntu
       if: ${{ contains('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}', '9p') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         mem: 4096
         debug: true
@@ -747,7 +768,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         envs: 'MYTOKEN MYTOKEN2'
         prepare: |
@@ -909,7 +930,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         envs: 'MYTOKEN MYTOKEN2'
         prepare: |
@@ -1034,7 +1055,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         mem: 4096
         debug: true
@@ -1097,7 +1118,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         mem: 4096
         debug: true
@@ -1151,22 +1172,46 @@ jobs:
         retention-days: 7
         if-no-files-found: ignore
 
+  # Skipped on RISC OS: its guest agent is not a shell and has no status
+  # channel at all, so anyvm can only report that a command COMPLETED, never
+  # whether it succeeded. A test whose whole point is "this must come back
+  # failed" therefore cannot pass there, and pretending otherwise would just
+  # bake a permanent red into that repo.
   testerr:
+    if: ${{ !contains(github.repository, 'riscos') }}
     strategy:
       fail-fast: false
     runs-on: ubuntu-24.04
     name: test default error Ubuntu
     steps:
+    # Sparse, like testtar/test9p: this job runs with the repo's DEFAULT sync,
+    # which on the agent guests is the tar or 9P channel, and it would
+    # otherwise ship 35 MB of committed node_modules through it just to check
+    # that a failing command reports failure.
     - uses: actions/checkout@v7
+      with:
+        sparse-checkout: |
+          conf
+          .github
+        sparse-checkout-cone-mode: true
     - name: Test in Ubuntu
       id: testerr
       continue-on-error: true
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         debug: true
+        # A command that EXISTS and fails, rather than `false` or a made-up
+        # name. This body is shared by every guest and the agent guests do
+        # not run a POSIX shell: 9front has no /bin/false (probed live), and
+        # cmd.exe has none either. An unknown NAME is worse still -- ion on
+        # Redox aborts the whole line with "pipeline execution error", so the
+        # `|| marker` arm never runs and the exec waits out its full timeout
+        # (measured: rc 124 instead of a prompt failure). A failing `ls` is
+        # reported the ordinary way by sh, rc and ion, and cmd.exe treats the
+        # missing `ls` itself as a plain command failure.
         run: |
-          echo "this is an error"
-          false
+          echo this is an error
+          ls /no/such/path
     - name: Verify that the previous step failed
       if: steps.testerr.outcome != 'failure'
       run: |
@@ -1184,16 +1229,31 @@ jobs:
     runs-on: ubuntu-24.04
     name: test default success Ubuntu
     steps:
+    # Sparse, same reason as testerr above -- and this is the job the full
+    # payload actually broke: the ReactOS push spent 12 minutes on those
+    # node_modules and still had no completion marker, and the RISC OS
+    # copy-back corrupted its archive at that size while the small-payload
+    # tar job passed.
     - uses: actions/checkout@v7
+      with:
+        sparse-checkout: |
+          conf
+          .github
+        sparse-checkout-cone-mode: true
     - name: Test in Ubuntu
       id: testpass
       continue-on-error: true
-      uses: vmactions/ubuntu-vm@930e0c3593f714ca222c6334a5de2bcfad9554d4
+      uses: vmactions/ubuntu-vm@081c5f70d7541099f4c15a72cb14fd6204404f4d
       with:
         debug: true
+        # No `true` and no double quotes: this body runs on every guest, and
+        # the agent guests are not POSIX. 9front has no /bin/true (probed
+        # live -- "file does not exist: './true'", which is exactly why this
+        # job went red on plan9-vm), cmd.exe has none either, and rc treats
+        # double quotes as ordinary characters rather than stripping them.
+        # A bare echo is valid in sh, rc, cmd.exe and ion alike.
         run: |
-          echo "this is a normal command"
-          true
+          echo this is a normal command
     - name: Verify that the previous step succeeded
       if: steps.testpass.outcome != 'success'
       run: |
