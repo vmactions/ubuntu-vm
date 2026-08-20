@@ -1,6 +1,6 @@
 {
   "name": "vmactions-Ubuntu",
-  "version": "",
+  "version": "1.0.0",
   "description": "GitHub actions for Ubuntu",
   "type": "module",
   "main": "index.js",
