@@ -46,6 +46,18 @@ All the supported releases are here:
 <!-- arch-label: aarch64 = aarch64 (arm64) -->
 <!-- arch-label: ppc64le = ppc64le (ppc64el) -->
 
+How the images are built:
+
+Each image is built automatically in the
+[anyvm-org/ubuntu-builder](https://github.com/anyvm-org/ubuntu-builder)
+repo's GitHub Actions: it downloads the official Ubuntu server cloud
+image, customizes it (serial console, ssh, first-boot setup), boots it
+in QEMU, pre-installs the packages listed in the conf, and exports the
+disk as a compressed qcow2 image. No interactive installer is run.
+
+Upstream media: the official Ubuntu cloud images from
+https://cloud-images.ubuntu.com/.
+
 
 
 
@@ -142,7 +154,7 @@ The code is shared from the host to the VM via `rsync` by default, you can choos
 You can also set `sync: no`, so the files will not be synced to the  VM.
 
 
-When using `rsync` or `scp`,  you can define `copyback: false` to not copy files back from the VM in to the host.
+When using a copy based sync method (`rsync`, `scp`, `tar` or `9p`), you can define `copyback: false` to not copy files back from the VM to the host. It has no effect on `sshfs` and `nfs`, which are live mounts and never copy back.
 
 
 ```yaml
