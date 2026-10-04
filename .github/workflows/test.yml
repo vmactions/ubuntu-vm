@@ -99,16 +99,6 @@ jobs:
             arch: loongarch64
           - release: "26.04"
             arch: armv7
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: i386
-          - release: ""
-            arch: loongarch64
-          - release: ""
-            arch: armv7
 
 
     runs-on: ${{ matrix.runs }}
@@ -281,16 +271,6 @@ jobs:
             arch: loongarch64
           - release: "26.04"
             arch: armv7
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: i386
-          - release: ""
-            arch: loongarch64
-          - release: ""
-            arch: armv7
 
 
     runs-on: ${{ matrix.runs }}
@@ -455,16 +435,6 @@ jobs:
           - release: "26.04"
             arch: loongarch64
           - release: "26.04"
-            arch: armv7
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: i386
-          - release: ""
-            arch: loongarch64
-          - release: ""
             arch: armv7
 
 
@@ -786,16 +756,6 @@ jobs:
           - release: "26.04"
             arch: loongarch64
           - release: "26.04"
-            arch: armv7
-          - release: ""
-            arch: powerpc64
-          - release: ""
-            arch: sparc64
-          - release: ""
-            arch: i386
-          - release: ""
-            arch: loongarch64
-          - release: ""
             arch: armv7
 
 
