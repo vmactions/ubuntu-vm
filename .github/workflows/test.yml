@@ -121,7 +121,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'sshfs') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
@@ -285,7 +285,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'nfs') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
@@ -512,7 +512,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'scp') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         envs: 'DEBUG MYTOKEN MYTOKEN2'
         prepare: |
@@ -645,7 +645,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}', 'tar') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         mem: 4096
         debug: true
@@ -712,7 +712,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}', '9p') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         mem: 4096
         debug: true
@@ -826,7 +826,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')[matrix.arch == '' && 'x86_64' || matrix.arch], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         envs: 'MYTOKEN MYTOKEN2'
         prepare: |
@@ -923,7 +923,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         prepare: |
           apt-get install -y socat
@@ -1024,7 +1024,7 @@ jobs:
         sparse-checkout-cone-mode: true
     - name: Test in Ubuntu
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         arch: ${{ matrix.arch }}
         debug: true
@@ -1072,7 +1072,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         envs: 'MYTOKEN MYTOKEN2'
         prepare: |
@@ -1195,7 +1195,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         mem: 4096
         debug: true
@@ -1258,7 +1258,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         mem: 4096
         debug: true
@@ -1339,7 +1339,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         mem: 4096
         debug: true
@@ -1401,7 +1401,7 @@ jobs:
     - name: Test in Ubuntu
       if: ${{ contains(fromJSON('{"x86_64":["rsync","scp","sshfs","nfs","tar"],"aarch64":["rsync","scp","sshfs","nfs","tar"],"riscv64":["rsync","scp","sshfs","nfs","tar"],"powerpc64":[],"sparc64":[],"ppc64le":["rsync","scp","sshfs","nfs","tar"],"s390x":["rsync","scp","sshfs","nfs","tar"],"i386":[],"loongarch64":[],"armv7":[]}')['x86_64'], 'rsync') }}
       id: test
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         mem: 4096
         debug: true
@@ -1476,7 +1476,7 @@ jobs:
     - name: Test in Ubuntu
       id: testerr
       continue-on-error: true
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         debug: true
         # A command that EXISTS and fails, rather than `false` or a made-up
@@ -1522,7 +1522,7 @@ jobs:
     - name: Test in Ubuntu
       id: testpass
       continue-on-error: true
-      uses: vmactions/ubuntu-vm@ba37729c99c3b7b11f55314a28a7a9a6f3d61262
+      uses: vmactions/ubuntu-vm@6466bd174452935f117b00e2dca7ae3699d106f5
       with:
         debug: true
         # No `true` and no double quotes: this body runs on every guest, and
